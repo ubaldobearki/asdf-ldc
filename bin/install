@@ -29,7 +29,7 @@ function install_ldc()
   local ldc_release_url="https://github.com/ldc-developers/ldc/releases/download/v${version}/ldc2-${version}-${platform}-x86_64.tar.xz"
 
   curl -L "${ldc_release_url}" -o "${tmp_dir}/ldc2-${platform}-${arch}.tar.xz"
-  tar xf "${tmp_dir}/ldc2-${platform}-${arch}.tar.xz" -C ${install_path} .
+  tar xf "${tmp_dir}/ldc2-${platform}-${arch}.tar.xz" --strip-components=1 -C ${install_path}
   rm -rf "${tmp_dir}"
 
 }
