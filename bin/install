@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+  
+ERR_VAL=''
+
+function install_ldc()
+{
+  local version=$1
+  local install_path=$2
+  local platform='unknown'
+  local arch='x86_64'
+
+  local tmp_dir=""
+  local unamestr=$(uname)
+  if [[ "$unamestr" == 'Linux' ]]; then
+     platform='linux'
+     tmp_dir=$(mktemp -d asdf-dmd.XXXX)
+  elif [[ "$unamestr" == 'FreeBSD' ]]; then
+     platform='freebsd'
+     tmp_dir=$(mktemp -d asdf-dmd.XXXX)
+  elif [[ "$unamestr" == 'Darwin' ]]; then
+     platform='osx'
+     tmp_dir=$(mktemp -d asdf-dmd.XXXX)
+  fi
+
+  if [[ ${platform} == 'unknown' ]]; then
+    ERR_VAL="unrecognized platform." && return
+  fi
+
+  local ldc_release_url="https://github.com/ldc-developers/ldc/releases/download/v${version}/ldc2-${version}-${platform}-x86_64.tar.xz"
+
+  curl -L "${ldc_release_url}" -o "${tmp_dir}/ldc2-${platform}-${arch}.tar.xz"
+  tar zxf "${tmp_dir}/ldc2-${platform}-${arch}.tar.xz" $install_path
+  rm -rf "${tmp_dir}"
+
+}
+
+install_ldc $ASDF_INSTALL_VERSION $ASDF_INSTALL_PATH
+
+if [ -n "$ERR_VAL" ]; then
+	printf "asdf-ldc install error: %s\n" "$ERR_VAL" 1>&2 
+	unset ERR_VAL
+fi

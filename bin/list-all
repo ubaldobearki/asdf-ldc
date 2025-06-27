@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function list_ldc_versions()
+{
+  local versions_list=$(
+    git ls-remote --heads --tags https://github.com/ldc-developers/ldc.git |
+    grep refs/tags |
+    cut -d '/' -f 3 |
+    grep -v '\^{}' |
+    grep -v 'untagged' |
+    awk -F "[,]+" '{sub(/v/, "")}/^[0-9].[0-9].[0-9]*/' |
+    sort -t "." -n -k1,1 -k2,2
+  )
+
+  printf "%s\n" ${versions_list}
+}
+
+list_ldc_versions
